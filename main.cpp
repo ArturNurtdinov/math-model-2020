@@ -37,7 +37,7 @@ int main() {
     for (int j = 0; j < 19; j++) {
         h = R / N;
         h2 = h / 2;
-        double F[N + 1];
+        auto F = new double[N + 1];
         F[0] = 1.0 / 2 * h * h2 / 2 * func(0);
         for (int i = 1; i < N + 1; ++i) {
             F[i] = h * i * h * func(i * h);
@@ -45,19 +45,19 @@ int main() {
         F[N] = h2 * N * h * func(N * h) + N * h * nu;
 
         // Зададимся тремя векторами, определяющими трёхдиагональную матрицу А
-        double A[N + 1];
+        auto A = new double[N + 1];
         A[0] = 0;
         for (int i = 1; i < N + 1; ++i) {
             A[i] = -(i - 1.0 / 2) * h * k((i - 1.0 / 2) * h) / h;
         }
 
-        double B[N + 1];
+        auto B = new double[N + 1];
         B[N] = 0;
         for (int i = 0; i < N + 1; ++i) {
             B[i] = -(i + 1.0 / 2) * h * k((i + 1.0 / 2) * h) / h;
         }
 
-        double C[N + 1];
+        auto C = new double[N + 1];
         C[0] = r(1.0 / 2, h) * k(r(1.0 / 2, h)) / h + r(1.0 / 2, h) / 2 * h2 * q(r(0, h));
         for (int i = 1; i < N; ++i) {
             C[i] = r(i + 1.0 / 2, h) * k(r(i + 1.0 / 2, h)) / h + r(i - 1.0 / 2, h) * k(r(i - 1.0 / 2, h)) / h +
@@ -66,8 +66,8 @@ int main() {
         C[N] = r(N - 1.0 / 2, h) * k(r(N - 1.0 / 2, h)) / h + h2 * r(N, h) * q(r(N, h)) + r(N, h) * X;
 
         // прогонка
-        double alpha[N + 1];
-        double beta[N + 1];
+        auto alpha = new double[N + 1];
+        auto beta = new double[N + 1];
 
         alpha[1] = -B[0] / C[0];
         beta[1] = F[0] / C[0];
@@ -76,7 +76,7 @@ int main() {
             beta[i + 1] = (F[i] - A[i] * beta[i]) / (A[i] * alpha[i] + C[i]);
         }
 
-        double v[N + 1];
+        auto v = new double[N + 1];
         v[N] = (F[N] - A[N] * beta[N]) / (A[N] * alpha[N] + C[N]);
 
         for (int i = N - 1; i > -1; --i) {
@@ -94,6 +94,14 @@ int main() {
         std::cout << std::setw(10) << N << "\t";
         std::cout << std::setw(15) << err << "\n";
         N *= 2;
+
+        delete[] A;
+        delete[] B;
+        delete[] C;
+        delete[] F;
+        delete[] v;
+        delete[] alpha;
+        delete[] beta;
     }
 
     return 0;
